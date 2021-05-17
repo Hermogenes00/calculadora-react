@@ -13,7 +13,7 @@ Up | Pega o último cálculo feito do histórico e exibe no display
 AC | Apaga o display e o histórico
 C | Apaga somente o display
 DEL | Deleta o último caracter informado no display
-AD | Exibe A linha de botões avançados ( (,),Hist,UP,AC )
+AD | Exibe a linha de botões avançados ( (,),Hist,UP,AC )
 
 ### Screenshot
 
