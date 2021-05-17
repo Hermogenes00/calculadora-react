@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora Teste</title>
+
+    <style>
+      html {
+        box-sizing: border-box;
+        background-color: black;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+      }
+      .calculator {
+        margin: 40px auto;
+        background-color: #ccc;
+        width: 500px;
+        min-height: 150px;
+        padding: 16px;
+        border-radius: 5px;
+      }
+      input {
+        border-color: #ccc;
+        border-radius: 5px;
+        width: 100%;
+        min-height: 30px;
+        text-align: right;
+      }
+      button {
+        border: 0;
+        border-radius: 4px;
+        padding: 10px;
+        background-color: white;
+        padding: 8px;
+        cursor: pointer;
+      }
+
+      body {
+        text-align: center;
+      }
+
+      .box {
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-gap: 12px;
+        margin-top: 4px;
+      }
+
+      .history {
+        width: 100%;
+        min-height: 100px;
+        background-color: white;
+        margin-bottom: 5px;
+        border-radius: 4px;
+        padding: 8px;
+        text-align: right;
+        color: gray;
+        overflow-y: scroll;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script
+      crossorigin=""
+      src="https://unpkg.com/react@16/umd/react.development.js"
+    ></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script
+      crossorigin=""
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+    ></script>
+
+    <script type="text/babel">
+      const keyboardButtons = [
+        7,
+        8,
+        9,
+        "\/",
+        "C",
+        4,
+        5,
+        6,
+        "*",
+        "Del",
+        1,
+        2,
+        3,
+        "-",
+        "Ad",
+        0,
+        ".",
+        "+",
+        "=",
+      ];
+      const keyboardAdvanced = ["(", ")", "Hist", "UP", "AC"];
+
+      const calcRegex = /^([0-9]|-|\+|\*|\/|\.)*$/;
+
+      const Calculator = () => {
+        const [display, setDisplay] = React.useState("");
+        const [showAdv, setShowAdv] = React.useState(false);
+        const [showHist, setShowHist] = React.useState(false);
+        const [history, setHistory] = React.useState([]);
+
+        const HistoryDisplay = () => {
+          return <div className=""></div>;
+        };
+
+        const Header = () => {
+          return (
+            <div className="">
+              <h4>Minha Calculadora React</h4>
+            </div>
+          );
+        };
+
+        const makeMath = () => {
+          setDisplay(eval(display));
+        };
+
+        const BuilButton = (value, indice) => {
+          return (
+            <button key={"" + indice} onClick={() => processValue(value)}>
+              {value}
+            </button>
+          );
+        };
+
+        const processValue = (value) => {
+          const lastIndexHistory = history.length - 1;
+          switch (value) {
+            case "=":
+              setHistory([].concat(history, display));
+              makeMath();
+              break;
+            case "enter":
+              setHistory([].concat(history, display));
+              makeMath();
+            case "C":
+              setDisplay("");
+              break;
+            case "AC":
+              setDisplay("");
+              setHistory([]);
+              break;
+            case "Ad":
+              setShowAdv(!showAdv);
+              break;
+            case "UP":
+              if (lastIndexHistory + -1) {
+                setDisplay(history[lastIndexHistory]);
+                const oldHistory = history;
+                setHistory(oldHistory.slice(0, lastIndexHistory));
+              }
+              break;
+            case "Del":
+              setDisplay(display.substring(0, display.length - 1));
+              break;
+            case "Hist":
+              setShowHist(!showHist);
+              break;
+            default:
+              setDisplay("" + display + value);
+          }
+        };
+
+        return (
+          <div className="calculator">
+            <div>
+              {showHist && (
+                <div className="history">
+                  {history.map((item, indice) => {
+                    return <p key={indice}>{item}</p>;
+                  })}
+                </div>
+              )}
+              <input
+                type="text"
+                className=""
+                onKeyPress={(event) => {
+                  if (event.key.toLowerCase() == "enter") {
+                    processValue(event.key.toLowerCase());
+                  }
+                }}
+                value={display}
+                onChange={(event) => {
+                  if (calcRegex.test(event.target.value)) {
+                    setDisplay(event.target.value);
+                  }
+                }}
+              />
+            </div>
+
+            <div className="box">
+              {showAdv && keyboardAdvanced.map(BuilButton)}
+              {keyboardButtons.map(BuilButton)}
+            </div>
+          </div>
+        );
+      };
+
+      const App = () => {
+        return (
+          <div className="container">
+            <Calculator></Calculator>
+          </div>
+        );
+      };
+
+      ReactDOM.render(<App />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
